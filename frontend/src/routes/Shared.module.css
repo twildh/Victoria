@@ -1,0 +1,6 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gutter);
+    align-items: center;
+}

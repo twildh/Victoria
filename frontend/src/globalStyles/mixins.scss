@@ -1,0 +1,14 @@
+@mixin flexRow {
+    display: flex;
+    flex-direction: row;
+    gap: var(--gutter);
+    align-items: center;
+}
+
+@mixin inputFields {
+    background-color: var(--color-input-background);
+    color: var(--color-text);
+    border: 3px solid var(--color-primary);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+}

@@ -1,0 +1,13 @@
+@use "src/globalStyles/mixins" as *;
+
+.submitRow {
+    @include flexRow;
+ 
+    select {
+        height: var(--inline-element-height);
+        border-radius: var(--border-radius);
+        box-sizing: border-box;
+        border: none;
+        color: var(--color-text);
+    }
+}

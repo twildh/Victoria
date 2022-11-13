@@ -1,0 +1,28 @@
+:root {
+
+    --color-primary: #45567a;
+    --color-text: rgb(66, 66, 66);
+    --color-white: white;
+
+    --color-accept: rgb(121, 204, 130);
+    --color-accept-hover: rgb(143, 208, 151);
+    --color-accept-active: rgb(75, 174, 86);
+
+    --color-danger: rgb(211, 140, 140);
+    --color-danger-hover: rgb(238, 187, 187);
+    --color-danger-active: rgb(156, 81, 81);
+
+    --color-input-background: rgb(127, 144, 175);
+
+
+    --gutter: 16px;
+    --gutter-small: 8px;
+    --gutter-tiny: 4px;
+
+    --border-radius: 3px;
+
+    --inline-element-height: 32px;
+
+    --font-size-header: 30px;
+    --font-size-text: 16px;
+}

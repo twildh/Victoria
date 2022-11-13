@@ -1,0 +1,9 @@
+@use "src/globalStyles/mixins" as *;
+
+.textarea {
+    @include inputFields;
+    width: 500px;
+    max-width: 650px;
+    height: 250px;
+    max-height: 300px;
+}

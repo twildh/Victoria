@@ -1,0 +1,7 @@
+body {
+    margin: 0;
+    font-family: 'Roboto', 'Open Sans','Ubuntu', 'Helvetica';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: var(--font-size-text);
+  }

@@ -1,0 +1,17 @@
+
+.banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--gutter);
+    border-radius: var(--border-radius);
+    color: var(--color-text);
+}
+
+.error {
+    background-color: rgb(223, 123, 66);
+}
+
+.info {
+    background-color: rgb(127, 144, 175);
+}

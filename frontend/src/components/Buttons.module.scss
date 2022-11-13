@@ -1,0 +1,48 @@
+.button {
+    background: none;
+	color: inherit;
+	border: none;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+    border-radius: var(--border-radius);
+
+    width: fit-content;
+    height: var(--inline-element-height);
+    padding: var(--gutter-tiny);
+    color: var(--color-text);
+}
+
+.acceptButton {
+    background-color: var(--color-accept);
+    &:not(.disabled){
+        &:hover{
+            background-color:  var(--color-accept-hover);
+        }
+        &:active{
+            background-color:  var(--color-accept-active);
+        }
+    }
+}
+
+
+
+.denyButton {
+    background-color:  var(--color-danger);
+    &:not(.disabled){
+        &:hover{
+            background-color:  var(--color-danger-hover);
+        }
+        &:active{
+            background-color:  var(--color-danger-active);
+        }
+    }
+
+}
+
+
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
