@@ -2,8 +2,19 @@
 
 .textarea {
     @include inputFields;
-    width: 500px;
-    max-width: 650px;
+    width: 90%;
+    min-width: 250px;
+    max-width: 675px;
     height: 250px;
     max-height: 300px;
 }
+
+
+@media only screen and (max-width: 749px) {
+    .textarea {
+        height: 50vh;
+        max-height: unset;
+        font-size: inherit;
+    }
+}
+    

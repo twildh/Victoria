@@ -5,6 +5,10 @@
   grid-template-rows: 50px auto 20px;
   grid-template-columns: auto;
   row-gap: var(--gutter);
+
+  @media only screen and (max-width: 749px) {
+    font-size: 1.1em;
+}
 }
 
 main {
@@ -12,9 +16,8 @@ main {
   justify-content: center;
 
   > div {
-    width: 900px;
+    width: 100%;
   }
-
 }
 
 header {

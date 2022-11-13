@@ -1,6 +1,8 @@
 import { A, useNavigate, useParams } from "@solidjs/router";
 import { Component, createSignal, Match, Switch } from "solid-js";
-import styles from "../Shared.module.css";
+import sharedStyles from "../Shared.module.css";
+import styles from "./SecretDetails.module.scss";
+
 import { Banner, BannerType } from "../../components/Banner";
 import { AcceptButton, DenyButton } from "../../components/Buttons";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
@@ -33,7 +35,7 @@ export const SecretDetails: Component = () => {
   };
 
   return (
-    <div class={styles.content}>
+    <div class={`${sharedStyles.content} ${styles.details}`}>
       <Switch>
         <Match when={secretState() === SecretState.HIDDEN}>
           <Banner

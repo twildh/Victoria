@@ -11,6 +11,8 @@
     height: var(--inline-element-height);
     padding: var(--gutter-tiny);
     color: var(--color-text);
+
+    text-align: center;
 }
 
 .acceptButton {
@@ -39,7 +41,6 @@
     }
 
 }
-
 
 
 .disabled {

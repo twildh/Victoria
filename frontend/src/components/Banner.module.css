@@ -6,6 +6,10 @@
     padding: var(--gutter);
     border-radius: var(--border-radius);
     color: var(--color-text);
+    
+
+    max-width: 900px;
+    width: calc(90% - (2 * var(--gutter)));
 }
 
 .error {
