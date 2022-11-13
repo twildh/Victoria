@@ -1,1 +1,1 @@
-docker run -it --rm -p 3766:80 victoria-fe:1.0.0
+docker run -it --restart unless-stopped -d -p 3766:80 victoria-fe:1.0.0
