@@ -5,31 +5,21 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/julienschmidt/httprouter"
 	"wildhaber.io/victoria/src/server"
 	"wildhaber.io/victoria/src/service"
 	"wildhaber.io/victoria/src/utils"
 )
 
-type CreateSecretParams struct {
-	Message  string
-	Duration time.Duration
-}
-
-type CreateSecretResponse struct {
-	MessageID uuid.UUID
-}
-
-type GetSecretResponse struct {
-	Message string
-}
-
 var SecretRoutes = []server.RouteTemplate{
-	{Method: server.GET, Path: "/secrets/{secretID}", HandleFunction: GetSecret},
+	{Method: server.DELETE, Path: "/secrets/:secretID", HandleFunction: DeleteSecret},
+	{Method: server.GET, Path: "/secrets/:secretID/check", HandleFunction: CheckSecret},
+	{Method: server.GET, Path: "/secrets/:secretID", HandleFunction: GetSecret},
 	{Method: server.POST, Path: "/secrets", HandleFunction: CreateSecret},
 }
 
-func GetSecret(w http.ResponseWriter, r *http.Request) *utils.ApiError {
-	secretIDAsString := utils.FromParams(r, "secretID")
+func GetSecret(w http.ResponseWriter, r *http.Request, p httprouter.Params) *utils.ApiError {
+	secretIDAsString := p.ByName("secretID")
 
 	secretID, err := uuid.Parse(secretIDAsString)
 	if err != nil {
@@ -44,11 +34,16 @@ func GetSecret(w http.ResponseWriter, r *http.Request) *utils.ApiError {
 	return nil
 }
 
-func CreateSecret(w http.ResponseWriter, r *http.Request) *utils.ApiError {
+func CreateSecret(w http.ResponseWriter, r *http.Request, p httprouter.Params) *utils.ApiError {
 
 	createParams := CreateSecretParams{}
 	utils.GetFromBody(r, &createParams)
-	secretPath, ok := service.StoreSecret(createParams.Message, createParams.Duration)
+
+	if createParams.DurationInMin > 10080 || createParams.DurationInMin < 5 {
+		return utils.InvalidRequest
+	}
+
+	secretPath, ok := service.StoreSecret(createParams.Message, time.Duration(createParams.DurationInMin)*time.Minute)
 
 	if !ok {
 		return utils.InvalidRequest
@@ -56,5 +51,35 @@ func CreateSecret(w http.ResponseWriter, r *http.Request) *utils.ApiError {
 
 	utils.ReturnJson(w, CreateSecretResponse{secretPath})
 
+	return nil
+}
+
+func DeleteSecret(w http.ResponseWriter, r *http.Request, p httprouter.Params) *utils.ApiError {
+	secretIDAsString := p.ByName("secretID")
+
+	secretID, err := uuid.Parse(secretIDAsString)
+	if err != nil {
+		return utils.ServerError
+	}
+
+	exists := service.CheckSecret(secretID)
+	if !exists {
+		return utils.NotFound
+	}
+
+	service.DeleteSecret(secretID)
+	return nil
+}
+
+func CheckSecret(w http.ResponseWriter, r *http.Request, p httprouter.Params) *utils.ApiError {
+	secretIDAsString := p.ByName("secretID")
+
+	secretID, err := uuid.Parse(secretIDAsString)
+	if err != nil {
+		return utils.ServerError
+	}
+
+	exists := service.CheckSecret(secretID)
+	utils.ReturnJson(w, CheckSecretResponse{exists})
 	return nil
 }

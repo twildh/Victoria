@@ -31,7 +31,7 @@ func (r *RecordMap) RemoveExpiredRecord() {
 	r.storeMap.Range(func(key, value interface{}) bool {
 
 		if rec, ok := value.(Record); ok {
-			if rec.expireOn.After(time.Now()) {
+			if rec.expireOn.Before(time.Now()) {
 				r.storeMap.Delete(key)
 			}
 		}

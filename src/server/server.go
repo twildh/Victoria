@@ -5,14 +5,16 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/julienschmidt/httprouter"
+
 	"wildhaber.io/victoria/src/utils"
 )
 
 var addr = flag.String("addr", "0.0.0.0:3765", "local http server")
+var acceptedOrigins = utils.GetENV("ACCESS_CONTROL_ORIGIN", "http://0.0.0.0:3000")
 
 type Server struct {
-	router *mux.Router
+	router *httprouter.Router
 }
 
 type RouteTemplate struct {
@@ -21,7 +23,7 @@ type RouteTemplate struct {
 	HandleFunction HandlerFunctionWithError
 }
 
-type HandlerFunctionWithError func(w http.ResponseWriter, r *http.Request) *utils.ApiError
+type HandlerFunctionWithError func(w http.ResponseWriter, r *http.Request, p httprouter.Params) *utils.ApiError
 
 type HandlerMethod string
 
@@ -34,7 +36,7 @@ const (
 
 func NewServer() Server {
 	server := Server{
-		router: mux.NewRouter(),
+		router: httprouter.New(),
 	}
 
 	return server
@@ -48,13 +50,20 @@ func (s *Server) Start() {
 
 func (s *Server) RegisterRoutes(routes []RouteTemplate) {
 	for _, route := range routes {
-		s.router.Handle(route.Path, handleErrorsOnRoute(route.HandleFunction)).Methods(string(route.Method))
+		s.router.Handle(string(route.Method), route.Path, ErrorHandlerAndCorsRoute(route.HandleFunction))
 	}
+	s.router.GlobalOPTIONS = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", acceptedOrigins)
+		// Adjust status code to 204
+		w.WriteHeader(http.StatusNoContent)
+	})
 }
 
-func handleErrorsOnRoute(fn HandlerFunctionWithError) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		err := fn(w, r)
+func ErrorHandlerAndCorsRoute(fn HandlerFunctionWithError) httprouter.Handle {
+	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		w.Header().Set("Access-Control-Allow-Origin", acceptedOrigins)
+
+		err := fn(w, r, p)
 		if err != nil {
 			w.WriteHeader(err.Status)
 			utils.ReturnJson(w, err)

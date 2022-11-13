@@ -47,3 +47,11 @@ func StoreSecret(message string, duration time.Duration) (uuid.UUID, bool) {
 func RetrieveSecret(id uuid.UUID) (string, bool) {
 	return recordings.LoadRecord(id)
 }
+
+func CheckSecret(id uuid.UUID) bool {
+	return recordings.CheckIfEntryExists(id)
+}
+
+func DeleteSecret(id uuid.UUID) {
+	recordings.RemoveRecord(id)
+}
