@@ -1,34 +1,31 @@
-## Usage
+# Victoria - Frontend
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
+The victoria frontend is here to act as the main way to access the server. It's easy to use interface allows for an easier secret sending.
 
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+This frontend was build with solid and npm.
+
+## Dev Usage
+
+To start a dev server run:
 
 ```bash
-$ npm install # or pnpm install or yarn install
+$ npm install
+$ npm run dev
 ```
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+Requests to the backend go via the vite proxy setup.
 
-## Available Scripts
+## Building the project
 
-In the project directory, you can run:
+```bash
+$ npm install
+$ npm build
+```
 
-### `npm dev` or `npm start`
+## Docker scripts
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+You can build a docker image with the given docker scripts. The docker file will include an nginx instance to server the static site.
 
-The page will reload if you make edits.<br>
-
-### `npm run build`
-
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
+```bash
+$ ./scripts/docker.build.sh
+```
