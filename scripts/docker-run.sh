@@ -1,0 +1,1 @@
+docker run -it --rm -p 3765:3765 victoria-be:1.0.0
