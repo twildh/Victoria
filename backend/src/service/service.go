@@ -24,7 +24,7 @@ func Init() {
 	}()
 }
 
-func StoreSecret(message string, duration time.Duration) (uuid.UUID, bool) {
+func StoreSecret(message string, duration time.Duration, isEncrypted bool) (uuid.UUID, bool) {
 
 	durationInNanos := duration.Nanoseconds()
 	if len(message) == 0 || durationInNanos > time.Hour.Nanoseconds()*24*7 ||
@@ -40,12 +40,16 @@ func StoreSecret(message string, duration time.Duration) (uuid.UUID, bool) {
 		keyAlreadyExists = recordings.CheckIfEntryExists(id)
 	}
 
-	recordings.StoreRecord(id, message, duration)
+	recordings.StoreRecord(id, message, duration, isEncrypted)
 	return id, true
 }
 
 func RetrieveSecret(id uuid.UUID) (string, bool) {
 	return recordings.LoadRecord(id)
+}
+
+func GetSecretStats(id uuid.UUID) *records.SecretInfo {
+	return recordings.GetSecretStats(id)
 }
 
 func CheckSecret(id uuid.UUID) bool {

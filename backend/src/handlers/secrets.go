@@ -13,7 +13,7 @@ import (
 
 var SecretRoutes = []server.RouteTemplate{
 	{Method: server.DELETE, Path: "/secrets/:secretID", HandleFunction: DeleteSecret},
-	{Method: server.GET, Path: "/secrets/:secretID/check", HandleFunction: CheckSecret},
+	{Method: server.GET, Path: "/secrets/:secretID/infos", HandleFunction: GetSecretInfos},
 	{Method: server.GET, Path: "/secrets/:secretID", HandleFunction: GetSecret},
 	{Method: server.POST, Path: "/secrets", HandleFunction: CreateSecret},
 }
@@ -43,7 +43,7 @@ func CreateSecret(w http.ResponseWriter, r *http.Request, p httprouter.Params) *
 		return utils.InvalidRequest
 	}
 
-	secretPath, ok := service.StoreSecret(createParams.Message, time.Duration(createParams.DurationInMin)*time.Minute)
+	secretPath, ok := service.StoreSecret(createParams.Message, time.Duration(createParams.DurationInMin)*time.Minute, createParams.IsEncrypted)
 
 	if !ok {
 		return utils.InvalidRequest
@@ -71,7 +71,7 @@ func DeleteSecret(w http.ResponseWriter, r *http.Request, p httprouter.Params) *
 	return nil
 }
 
-func CheckSecret(w http.ResponseWriter, r *http.Request, p httprouter.Params) *utils.ApiError {
+func GetSecretInfos(w http.ResponseWriter, r *http.Request, p httprouter.Params) *utils.ApiError {
 	secretIDAsString := p.ByName("secretID")
 
 	secretID, err := uuid.Parse(secretIDAsString)
@@ -79,7 +79,12 @@ func CheckSecret(w http.ResponseWriter, r *http.Request, p httprouter.Params) *u
 		return utils.ServerError
 	}
 
-	exists := service.CheckSecret(secretID)
-	utils.ReturnJson(w, CheckSecretResponse{exists})
+	stats := service.GetSecretStats(secretID)
+
+	if stats == nil {
+		return utils.NotFound
+	}
+
+	utils.ReturnJson(w, CheckSecretResponse{IsEncrypted: stats.IsEncrypted, TimeToExpiration: stats.ExpireOn.Sub(time.Now())})
 	return nil
 }
