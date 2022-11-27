@@ -10,4 +10,5 @@ export enum SecretState {
   NOT_FOUND = "notFound",
   LOADING = "loading",
   HIDDEN = "hidden",
+  ENCRYPTION_ERROR = "encryptionError",
 }

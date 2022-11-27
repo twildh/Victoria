@@ -1,4 +1,5 @@
 import { useNavigate } from "@solidjs/router";
+import CryptoJS from "crypto-js";
 import { Component, createSignal } from "solid-js";
 import { AcceptButton } from "../components/Buttons";
 import { TextArea } from "../components/TextArea";
@@ -7,17 +8,22 @@ import { createSecret } from "../network/calls";
 import sharedStyles from "./Shared.module.css";
 
 import styles from "./Home.module.scss";
+import { TextInput } from "../components/TextInput";
 
 export const Home: Component = () => {
   const [secretInput, setSecretInput] = createSignal("");
+  const [secretKey, setSecretKey] = createSignal("");
   const [secretTiming, setSecretTiming] = createSignal(`${60 * 24}`);
 
   const navigate = useNavigate();
 
   const handleSecretSubmit = async () => {
     const { message, error } = await createSecret(
-      secretInput(),
-      Number.parseInt(secretTiming())
+      !secretKey().trim()
+        ? secretInput()
+        : CryptoJS.AES.encrypt(secretInput(), secretKey()).toString(),
+      Number.parseInt(secretTiming()),
+      Boolean(secretKey().trim())
     );
     if (error) {
       return;
@@ -29,7 +35,13 @@ export const Home: Component = () => {
     <div class={sharedStyles.content}>
       <TextArea
         value={secretInput()}
+        placeholder={"Enter your secret here."}
         onInput={(e) => setSecretInput(e.currentTarget.value)}
+      />
+      <TextInput
+        value={secretKey()}
+        placeholder={"Optional: set a password for your secret"}
+        onInput={(e) => setSecretKey(e.currentTarget.value)}
       />
       <div class={styles.submitRow}>
         <select

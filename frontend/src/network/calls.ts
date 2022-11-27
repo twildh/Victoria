@@ -16,12 +16,17 @@ export const fetchSecret = async (
 
 export const createSecret = async (
   message: string,
-  duration: number
+  duration: number,
+  isEncrypted: boolean
 ): Promise<UnifiedRequestResponse> => {
   try {
     const creationResponse = await fetch(`${BASE_URL}`, {
       method: "POST",
-      body: JSON.stringify({ message, durationInMinutes: duration }),
+      body: JSON.stringify({
+        message,
+        durationInMinutes: duration,
+        isEncrypted,
+      }),
     });
     const responseBody = await creationResponse.json();
     return { message: responseBody.messageId, error: !creationResponse.ok };
@@ -43,14 +48,16 @@ export const deleteSecret = async (
   }
 };
 
-export const checkSecret = async (secretId: string): Promise<boolean> => {
+export const getSecretInfos = async (
+  secretId: string
+): Promise<{ isEncrypted: boolean; timeToExpiration: number } | undefined> => {
   try {
-    const checkResponse = await fetch(`${BASE_URL}/${secretId}/check`, {
+    const checkResponse = await fetch(`${BASE_URL}/${secretId}/infos`, {
       method: "GET",
     });
     const responseBody = await checkResponse.json();
-    return checkResponse.ok && responseBody.secretExists;
+    return checkResponse.ok ? responseBody : undefined;
   } catch {
-    return false;
+    return undefined;
   }
 };

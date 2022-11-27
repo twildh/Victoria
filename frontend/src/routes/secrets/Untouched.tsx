@@ -4,7 +4,7 @@ import sharedStyles from "../Shared.module.css";
 import styles from "./Untouched.module.scss";
 import { Banner, BannerType } from "../../components/Banner";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
-import { checkSecret, deleteSecret } from "../../network/calls";
+import { getSecretInfos, deleteSecret } from "../../network/calls";
 
 import { checkIfValidUUID, SecretState } from "./utils";
 import { AcceptButton, DenyButton } from "../../components/Buttons";
@@ -13,6 +13,8 @@ export const Untouched: Component = () => {
   const [secretState, setSecretState] = createSignal<SecretState>(
     SecretState.LOADING
   );
+  const [expirationDate, setExpirationDate] = createSignal<Date>();
+
   const params = useParams();
   const navigate = useNavigate();
 
@@ -28,8 +30,11 @@ export const Untouched: Component = () => {
       setSecretState(SecretState.NOT_FOUND);
       return;
     }
-    const secretExists = await checkSecret(params.secretId);
-    if (secretExists) {
+    const secretInfos = await getSecretInfos(params.secretId);
+    if (secretInfos) {
+      setExpirationDate(
+        new Date(new Date().getTime() + secretInfos.timeToExpiration / 1000000)
+      );
       setSecretState(SecretState.EXISTS);
       return;
     }
@@ -54,9 +59,14 @@ export const Untouched: Component = () => {
         <Match when={secretState() === SecretState.EXISTS}>
           <Banner
             type={BannerType.INFO}
-            text={
-              "Secret still exists, this is a read-only view, copy the link to send the secret to someone"
-            }
+            text={`Secret still exists, this is a read-only view, copy the link to send the secret to someone. Will expire at: ${
+              expirationDate()
+                ? new Intl.DateTimeFormat("de-CH", {
+                    dateStyle: "full",
+                    timeStyle: "long",
+                  }).format(expirationDate())
+                : "-"
+            }`}
           />
           <div class={styles.linkWrapper}>
             <input readOnly value={secretLocation} />

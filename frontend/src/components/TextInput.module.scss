@@ -1,0 +1,18 @@
+@use "src/globalStyles/mixins" as *;
+
+.textinput {
+    @include inputFields;
+
+    width: 500px;
+    height: var(--inline-element-height);
+}
+
+
+@media only screen and (max-width: 749px) {
+    .textinput {
+        width: 90%;
+        max-height: unset;
+        font-size: inherit;
+    }
+}
+    
